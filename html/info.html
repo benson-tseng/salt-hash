@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"
+      rel="stylesheet"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-container fill-height fluid>
+          <v-card class="ma-auto pa-10" width="500" height="500" outlined>
+            <v-card-title class="d-flex justify-center">
+              <span class="display-1">WELCOME</span>
+            </v-card-title>
+            <v-container fluid fill-height class="d-flex align-start">
+              <v-row class="d-flex justify-center mt-1">
+                <v-col class="d-flex justify-center align-center font1" cols="5">
+                  <span>UID:</span>
+                </v-col>
+                <v-col class="d-flex justify-center font1" cols="7">
+                  <span>{{uid}}</span>
+                </v-col>
+                <v-col class="d-flex justify-center font1" cols="5">
+                  <span>name:</span>
+                </v-col>
+                <v-col class="d-flex justify-center font1" cols="7">
+                  <span>{{name}}</span>
+                </v-col>
+                <v-col class="d-flex justify-center font1" cols="5">
+                  <span>department:</span>
+                </v-col>
+                <v-col class="d-flex justify-center font1" cols="7">
+                  <span>{{department}}</span>
+                </v-col>
+                <v-col class="d-flex justify-center font1" cols="5">
+                  <span>authLvl:</span>
+                </v-col>
+                <v-col class="d-flex justify-center font1" cols="7">
+                  <span>{{authLvl}}</span>
+                </v-col>
+                <v-col class="d-flex justify-center" cols="5">
+                  <v-btn
+                    color="grey darken-2"
+                    @click="logout"
+                    large
+                    block
+                    outlined
+                  >
+                    logout
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-container>
+      </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      new Vue({
+        el: "#app",
+        vuetify: new Vuetify(),
+        created: async function () {
+          let res = (await this.axios.get("/getInfo")).data;
+          if (res == 0) {
+            window.location.replace("login.html");
+            alert("login first");
+          } else {
+            this.name = res.name;
+            this.uid = res.uid;
+			this.department = res.department;
+			this.authLvl = res.authLvl;
+			console.log(this.uid);
+          }
+        },
+        data() {
+          return {
+            name: null,
+            uid: null,
+			department:null,
+			authLvl:null,
+            axios: axios.create({
+              withCredentials: true,
+              crossDomain: true,
+              baseURL: "http://192.168.245.132:3000/api",
+            }),
+          };
+        },
+        methods: {
+          change_pwd() {
+            window.location.replace("changePswd.html");
+          },
+          async logout() {
+            let res = (await this.axios.get("logout")).data;
+            if (res == 1) {
+              window.location.replace("login.html");
+              alert("logout success");
+            } else {
+              alert("logout failed");
+            }
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  .font1 {
+    font-size: 20px;
+  }
+</style>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css"
+      rel="stylesheet"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-container fill-height fluid>
+          <v-card class="ma-auto pa-10" width="500" height="500" outlined>
+            <v-form lazy-validation @submit.prevent="sign_in" ref="form">
+              <v-container fluid fill-height class="d-flex align-center">
+                <v-row>
+                  <v-col cols="12" class="mb-10 d-flex justify-center">
+                    <span class="display-1">LOGIN</span>
+                  </v-col>
+                  <v-col cols="12" class="py-1 px-5">
+                    <v-text-field
+                      v-model="account"
+                      label="account"
+                      outlined
+                      rounded
+                      clearable
+                      :rules="[rules.required]"
+                      class="pa-0"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" class="py-1 px-5">
+                    <v-text-field
+                      hide-details="auto"
+                      v-model="password"
+                      label="password"
+                      outlined
+                      rounded
+                      clearable
+                      :rules="[rules.required]"
+                      :type="show ? 'text' : 'password'"
+                      :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                      class="pa-0"
+                      @click:append="show = !show"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" class="pl-5">
+                    <a class="ml-3" href="signUp.html" style="color: black"
+                      >sign up</a
+                    >
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    class="px-5 pa-0 mt-5 mb-5 d-flex justify-center"
+                  >
+                    <v-btn
+                      v-bind:loading="loading"
+                      outlined
+                      color="grey darken-2"
+                      x-large
+                      type="submit"
+                    >
+                      sign in
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-form>
+          </v-card>
+        </v-container>
+      </v-app>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      new Vue({
+        el: "#app",
+        vuetify: new Vuetify(),
+        data: {
+          account: null,
+          password: null,
+          show: false,
+          loading: false,
+          rules: {
+            required: (value) => !!value || "required",
+          },
+          //fking important
+          axios: axios.create({
+            withCredentials: true,
+            baseURL: "http://192.168.245.132:3000/api",
+          }),
+        },
+        methods: {
+          async sign_in() {
+            this.loading = true;
+            let res = (
+              await this.axios.post("login", {
+                account: this.account,
+                password: this.password,
+              })
+            ).data;
+            if (res == 11) {
+              alert("good");
+              window.location.replace("info.html");
+            } else {
+              alert("noooop");
+              this.account = null;
+              this.password = null;
+            }
+            this.loading = false;
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

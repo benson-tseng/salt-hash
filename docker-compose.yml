@@ -1,0 +1,38 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./html:/usr/share/nginx/html
+    privileged: true
+#    links:
+#      - node
+    ports:
+      - 80:80
+  node:
+    build:
+      context: ./server
+    ports:
+      - 3000:3000
+    networks:
+      - node
+    depends_on:
+      - cloudsql
+  cloudsql:
+    image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.0.0
+    volumes:
+      - type: bind
+        source: ./gcp/civil-charmer-354209-38b2f7e5635f.json
+        target: /service-account-key.json
+        read_only: true
+    ports:
+      - target: 3306
+        published: 13306
+    privileged: true
+    networks: 
+      - node
+    command: --address 0.0.0.0 --port 3306 --credentials-file /service-account-key.json civil-charmer-354209:asia-east1:benson0603
+networks:
+  node:
+    name: node
+    driver: bridge
