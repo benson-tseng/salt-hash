@@ -1,3 +1,6 @@
 /gcp
 /server/node_modules
 /server/.env
+/server/testApi.js
+/server/testDB.js
+/server/testHash.js
